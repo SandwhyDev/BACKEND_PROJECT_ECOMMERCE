@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Users{
+  id                    Int         @id @default(autoincrement())
+  email                 String      @unique
+  full_name             String      @unique
+  password              String
+  country_code          Int         
+  createdAt             DateTime    @default(now())
+
+  //relasi
+  country               Countries   @relation(fields: [country_code], references: [code])
+  merchants             Merchants?
+  orders                Orders[]
+
+}
+
+model Countries{
+  @@id([code])
+
+  code                  Int          @unique
+  kelurahan        String       @unique
+  kecamatan        String       @unique
+  kota                  String       @unique
+
+  //relasi
+  user                  Users[]
+  merchants             Merchants[]
+  merchants_periods     Merchants_periods[]
+}
+
+model Merchants{
+  id                    Int          @id  @default(autoincrement())
+  admin_id              Int           @unique
+  merchant_name         String        @unique
+  kodepos               Int          
+  
+  //relasi
+  admin                 Users         @relation(fields: [admin_id], references: [id])
+
+  country               Countries     @relation(fields: [kodepos], references: [code])
+
+  products              Products[]
+  merchants_periods     Merchants_periods[]
+}
+
+model Merchants_periods{
+  id                    Int           @id @default(autoincrement())
+  merchant_id           Int
+  kodepos_id            Int
+  start_date            DateTime      @default(now())
+  end_date              DateTime
+
+  //relasi
+  merchant              Merchants     @relation(fields: [merchant_id], references: [id])
+  kodepos               Countries     @relation(fields: [kodepos_id], references:[code])
+
+}
+
+
+model Products{
+  id                    Int           @id @default(autoincrement())
+  nama                  String
+  merchants_id          Int
+  harga                 Int
+  status                String
+  categori_id           Int
+  createdAt             DateTime      @default(now())
+  
+  //relasi
+  merchants            Merchants      @relation(fields: [merchants_id], references: [id])
+  category             Categori       @relation(fields: [categori_id], references: [id])
+  order_item           Order_items[]  @relation("product_id")
+}
+
+model Categori{
+  id                    Int           @id @default(autoincrement())
+  cat_nama              String
+  
+  //relasi
+  products              Products[]
+  
+}
+
+model Order_items{
+  order_id              Int
+  
+  product_id            Int
+  quantity              Int
+
+  //relasi
+  products              Products     @relation("product_id",fields: [product_id], references: [id])
+  orders                Orders       @relation("order_item",fields: [order_id], references: [id])
+
+  @@id([order_id, product_id])
+}
+
+model Orders{
+  id                    Int          @id  @default(autoincrement())
+  user_id               Int
+  status                String
+
+  //relasi
+  user                  Users         @relation(fields: [user_id], references: [id])
+  order_item           Order_items[]  @relation("order_item") 
+}
