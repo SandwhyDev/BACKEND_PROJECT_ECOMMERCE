@@ -44,3 +44,52 @@ categori.get("/categori_read_all", async(req,res)=>{
         })
     }
 })
+
+categori.put("/category_update/:id", form_data.none(), async(req,res)=>{
+    try {
+        const {id} = await req.params
+        const data = await req.body
+        const result = await ps.categori.update({
+            where : {
+                id : parseInt(id)
+            },
+            data : {
+                cat_nama : data.cat_nama
+
+            }
+        })
+
+        res.json({
+            success : true,
+            msg : "berhasil update",
+            query : result
+        })
+    } catch (error) {
+        res.json({
+            success : false, 
+            error :  error.message
+        })
+    }
+})
+
+categori.delete("/category_delete/:id", async(req,res)=>{
+    try {
+        const {id} = await req.params
+        const result = await ps.categori.delete({
+            where : {
+                id : parseInt(id)
+            }
+        })
+
+        res.json({
+            success : true,
+            msg : "berhasil delete",
+            query : result
+        })
+    } catch (error) {
+        res.json({
+            success : false, 
+            error :  error.message
+        })
+    }
+})

@@ -22,6 +22,7 @@ model Users{
   country               Countries   @relation(fields: [country_code], references: [code])
   merchants             Merchants?
   orders                Orders[]
+  order_item            Order_items[]
 
 }
 
@@ -29,9 +30,9 @@ model Countries{
   @@id([code])
 
   code                  Int          @unique
-  kelurahan        String       @unique
-  kecamatan        String       @unique
-  kota                  String       @unique
+  kelurahan             String       
+  kecamatan             String       
+  kota                  String       
 
   //relasi
   user                  Users[]
@@ -40,7 +41,7 @@ model Countries{
 }
 
 model Merchants{
-  id                    Int          @id  @default(autoincrement())
+  id                    Int           @id  @default(autoincrement())
   admin_id              Int           @unique
   merchant_name         String        @unique
   kodepos               Int          
@@ -85,7 +86,7 @@ model Products{
 
 model Categori{
   id                    Int           @id @default(autoincrement())
-  cat_nama              String
+  cat_nama              String        @unique
   
   //relasi
   products              Products[]
@@ -93,6 +94,7 @@ model Categori{
 }
 
 model Order_items{
+  user_id               Int
   order_id              Int
   
   product_id            Int
@@ -101,6 +103,7 @@ model Order_items{
   //relasi
   products              Products     @relation("product_id",fields: [product_id], references: [id])
   orders                Orders       @relation("order_item",fields: [order_id], references: [id])
+  user                  Users        @relation(fields: [user_id], references: [id])
 
   @@id([order_id, product_id])
 }
@@ -112,5 +115,5 @@ model Orders{
 
   //relasi
   user                  Users         @relation(fields: [user_id], references: [id])
-  order_item           Order_items[]  @relation("order_item") 
+  order_item            Order_items[]  @relation("order_item") 
 }

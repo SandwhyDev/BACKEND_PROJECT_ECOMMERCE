@@ -74,4 +74,26 @@ country_code.put("/country_code_update/:code",form_data.none() ,async(req,res)=>
     }
 })
 
+country_code.delete("/country_code_delete/:code", async(req,res)=>{
+    try {
+        const {code} = await req.params
+        const result = await ps.countries.delete({
+            where : {
+                code  : parseInt(code)
+            }
+        })
+
+        res.json({
+            success : true,
+            msg : "berhasil delete",
+            query : result
+        })
+    } catch (error) {
+        res.json({
+            success : false,
+            error : error.message
+        })
+    }
+})
+
 export default country_code

@@ -16,6 +16,8 @@ merchants_periods.post("/merchants_periods_create", form_data.none(), async (req
             }
         })
 
+        if(result)
+
         res.json({
             success : true,
             msg : "berhasil",
@@ -65,6 +67,29 @@ merchants_periods.put("/merchants_periods_update/:id", form_data.none(), async(r
             msg : "berhasil",
             query : result
         })
+    } catch (error) {
+        res.json({
+            success : false,
+            error : error.message
+        })
+    }
+})
+
+merchants_periods.delete("merchants_periods_delete/:id", async(req,res)=>{
+    try {
+        const {id} = await req.params
+        const data = await ps.merchants_periods.delete({
+            where : {
+                id : parseInt(id)
+            }
+        })
+
+        res.json({
+            success : true,
+            msg : "berhasil delete",
+            query : data
+        })
+
     } catch (error) {
         res.json({
             success : false,
